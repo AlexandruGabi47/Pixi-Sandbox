@@ -15,7 +15,7 @@ export enum Colors
 }
 
 export class ShapeSpawnerScene extends Scene {
-    private _shapesPerSecond: number = 50;
+    private _shapesPerSecond: number = 1;
     private _gravity: number = 200;
 
     private readonly shapePool: ShapeGameObjectPool = new ShapeGameObjectPool('ShapeGameObjectPool');

@@ -57,7 +57,7 @@ export class ShapeGameObjectPool extends Scene {
 
         go.SwitchParentTo(scene.CurrentContainer);
 
-        go.graphics.on("pointerup", (event: Event): void => this.onMouseUp(event, go));
+        go.graphics.on("pointerdown", (event: Event): void => this.onMouseDown(event, go));
 
         go.Enabled = true;
         
@@ -70,12 +70,12 @@ export class ShapeGameObjectPool extends Scene {
 
         go.SwitchParentTo(this.CurrentContainer);
 
-        go.graphics.off("pointerup", (event: Event): void  => this.onMouseUp(event, go));
+        go.graphics.off("pointerdown", (event: Event): void  => this.onMouseDown(event, go));
 
         go.Enabled = false;
     }
 
-    private onMouseUp(event: Event, go: GameObject): void
+    private onMouseDown(event: Event, go: GameObject): void
     {
         this.DespawnShape(go);
     }
