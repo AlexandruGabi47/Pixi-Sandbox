@@ -28,7 +28,7 @@ export class ShapeSpawnerScene extends Scene {
      * Basically at some point when I implemented the pool,
      * I would pull an object from the pool array without properly handling in which array they would be
      * Causing a 'funny' bug where eventually new shapes pulled from the pool would be faster than the rest
-     * Since they would appear twice in the same array when handling gravity
+     * Since they would appear more than once in the same array when handling gravity
      */
     private readonly funnnyFeatureParam: string = "funnyFeature";
     private enableFunnyFeature: boolean = false;
@@ -78,7 +78,7 @@ export class ShapeSpawnerScene extends Scene {
         
         const bounds: Rectangle = PixiEngine.GetCanvasBounds();
         const randomPos: Point = new Point(
-            Utils.Lerp(bounds.left + bounds.width,bounds.right - bounds.width, Math.random()),
+            Utils.Lerp(bounds.left + go.graphics.width, bounds.right - go.graphics.width, Math.random()),
             bounds.top - go.graphics.height);
 
         go.graphics.tint = randomColor;

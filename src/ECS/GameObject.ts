@@ -45,6 +45,7 @@ export class GameObject {
         return this._currentScene;
     }
 
+    // Currently not being used
     public Update(deltaTime: number): void { }
 
     public Render(): void {

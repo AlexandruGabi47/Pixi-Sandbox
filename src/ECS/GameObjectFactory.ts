@@ -11,6 +11,7 @@ export class GameObjectFactory {
     public static CreateGameObject(name: string, graphics: Graphics): GameObject {
         const go: GameObject = new GameObject(name, graphics);
         this._count++;
+        
         return go;
     }
 }
