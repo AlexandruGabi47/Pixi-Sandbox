@@ -84,7 +84,6 @@ p {
 }
 
 #app {
-  width: 1126px;
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -109,8 +108,13 @@ p {
   }
 }
 
+/**/
+
 #canvas {
   background: var(--code-bg);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
+
+  width: 90vw;
+  height: 90vh;
 }

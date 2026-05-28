@@ -1,8 +1,11 @@
 import './style.css'
+import { PixiEngine } from './Core/PixiEngine'
+import { ShapeSpawnerScene } from './ShapeSpawner/ShapeSpawnerScene'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 <section id="center">
-  <canvas id="canvas" width="400" height="400"></canvas>
+  <canvas id="canvas"></canvas>
 </section>
 `
 
+await PixiEngine.Startup(new ShapeSpawnerScene())
