@@ -8,4 +8,4 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 </section>
 `
 
-await PixiEngine.Startup(new ShapeSpawnerScene())
+await PixiEngine.Startup(new ShapeSpawnerScene('ShapeSpawnerScene'))

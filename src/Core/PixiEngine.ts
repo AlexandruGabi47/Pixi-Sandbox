@@ -1,4 +1,4 @@
-import { Application, Point, Rectangle, Ticker } from 'pixi.js'
+import { Application, Container, Rectangle, Ticker } from 'pixi.js'
 import { Scene } from '../Scene/Scene'
 
 export class PixiEngine
@@ -9,12 +9,17 @@ export class PixiEngine
     public static set CurrentScene(scene: Scene)
     {
         PixiEngine._currentScene = scene;
-        PixiEngine.PixiApp.stage.addChild(PixiEngine._currentScene.CurrentContainer);
+        PixiEngine.AddContainer(scene.CurrentContainer);
     }
     
     public static get CurrentScene(): Scene
     {
         return PixiEngine._currentScene;
+    }
+
+    public static AddContainer(container: Container): void
+    {
+        PixiEngine.PixiApp.stage.addChild(container);
     }
 
     public static async Startup(scene: Scene): Promise<void>
@@ -31,7 +36,10 @@ export class PixiEngine
 
         PixiEngine.PixiApp.ticker = new Ticker();
         PixiEngine.PixiApp.ticker.add(PixiEngine.UpdateLoop);
+
         PixiEngine.CurrentScene = scene;
+        PixiEngine.CurrentScene.Init();
+
         PixiEngine.PixiApp.ticker.start();
     }
     

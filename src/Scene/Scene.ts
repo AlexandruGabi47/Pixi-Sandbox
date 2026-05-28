@@ -5,9 +5,11 @@ export abstract class Scene {
     private _currentContainer: Container;
     private _gameObjects: GameObject[] = [];
 
-    constructor() {
-        this._currentContainer = new Container();
+    constructor(label: string) {
+        this._currentContainer = new Container({label: label});
     }
+
+    public Init(): void { }
 
     public set CurrentContainer(container: Container) {
         this._currentContainer = container;
@@ -40,7 +42,7 @@ export abstract class Scene {
         }
     }
 
-    public GetAllGameObjects(): GameObject[] {
+    public get GameObjects(): GameObject[] {
         return this._gameObjects;
     }
 }

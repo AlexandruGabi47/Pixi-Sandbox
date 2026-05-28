@@ -15,12 +15,32 @@ export enum Colors
 }
 
 export class ShapeSpawnerScene extends Scene {
-    private shapesPerSecond: number = 1;
+    private shapesPerSecond: number = 50;
     private gravity: number = 200;
+
+    private shapePool: ShapeGameObjectPool = new ShapeGameObjectPool('ShapeGameObjectPool');
+    private individualShapePoolSize: number = 10;
 
     private timeSinceLastSpawn: number = 0;
 
-    private pool: ShapeGameObjectPool = new ShapeGameObjectPool();
+    /**
+     * Not a bug, a feature
+     * Basically at some point when I implemented the pool,
+     * I would pull an object from the pool array without properly handling in which array they would be
+     * Causing a 'funny' bug where eventually new shapes pulled from the pool would be faster than the rest
+     * Since they would appear twice in the same array when handling gravity
+     */
+    private readonly funnnyFeatureParam: string = "funnyFeature";
+    private enableFunnyFeature: boolean = false;
+
+    public Init(): void
+    {
+        const paramVal = Utils.GetURLParam(this.funnnyFeatureParam);
+        if (paramVal !== null)
+            this.enableFunnyFeature = paramVal;
+
+        this.shapePool.InitPool(this.individualShapePoolSize)
+    }
 
     public Update(deltaTime: number): void {
         this.TrySpawnShape(deltaTime);
@@ -38,9 +58,12 @@ export class ShapeSpawnerScene extends Scene {
     private ApplyGravityToShapes(deltaTime: number) {
         let bounds = PixiEngine.GetCanvasBounds();
 
-        for (const gameObject of this.GetAllGameObjects()) {
+        for (const gameObject of this.GameObjects) {
             if (this.IsObjectOutOfBounds(gameObject, bounds))
-                gameObject.Destroy()
+            {
+                this.shapePool.DespawnShape(gameObject);
+                continue;
+            }
             gameObject.transform.position.y += this.gravity * deltaTime;
         }
     }
@@ -51,7 +74,7 @@ export class ShapeSpawnerScene extends Scene {
 
     public SpawnRandomShape(): void {
         let randomColor: number = Utils.GetRandomEnumElement(Colors);
-        let go: GameObject = this.pool.SpawnShape(Utils.GetRandomEnumElement(ShapeType));
+        let go: GameObject = this.shapePool.SpawnShape(Utils.GetRandomEnumElement(ShapeType), this);
         
         let bounds: Rectangle = PixiEngine.GetCanvasBounds();
         let randomPos: Point = new Point(
@@ -60,5 +83,8 @@ export class ShapeSpawnerScene extends Scene {
 
         go.graphics.tint = randomColor;
         go.transform.position = randomPos;
+
+        if (this.enableFunnyFeature)
+            this.AddGameObject(go);
     }
 }

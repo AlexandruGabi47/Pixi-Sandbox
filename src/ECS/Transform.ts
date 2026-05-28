@@ -1,15 +1,15 @@
-import * as PIXI from 'pixi.js'
+import { Point } from 'pixi.js'
 
 export class Transform2D {
-    private _position: PIXI.Point = new PIXI.Point();
+    private _position: Point = new Point();
     private _rotation: number = 0;
-    private _scale: PIXI.Point = new PIXI.Point(1, 1);
+    private _scale: Point = new Point(1, 1);
 
-    get position(): PIXI.Point {
+    get position(): Point {
         return this._position;
     }
 
-    set position(newPos: PIXI.Point) {
+    set position(newPos: Point) {
         this._position = newPos;
     }
 
@@ -21,11 +21,11 @@ export class Transform2D {
         this._rotation = newRot;
     }
 
-    get scale(): PIXI.Point {
+    get scale(): Point {
         return this._scale;
     }
 
-    set scale(newScale: PIXI.Point) {
+    set scale(newScale: Point) {
         this._scale = newScale;
     }
 }

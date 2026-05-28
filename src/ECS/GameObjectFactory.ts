@@ -1,10 +1,16 @@
 import { GameObject } from "./GameObject";
-import { Graphics, Container } from 'pixi.js';
+import { Graphics } from 'pixi.js';
 
 export class GameObjectFactory {
-    public static CreateGameObject(name: string, graphics: Graphics, container: Container): GameObject {
+    private static _count: number = 0;
+
+    public static get Count(): number {
+        return GameObjectFactory._count;
+    }
+
+    public static CreateGameObject(name: string, graphics: Graphics): GameObject {
         let go: GameObject = new GameObject(name, graphics);
-        container.addChild(go.graphics);
+        this._count++;
         return go;
     }
 }
