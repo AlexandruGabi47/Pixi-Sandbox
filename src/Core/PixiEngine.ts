@@ -58,4 +58,9 @@ export class PixiEngine
     {
         return PixiEngine.PixiApp.screen.getBounds();
     }
+
+    public static GetFPS(): number
+    {
+        return PixiEngine.PixiApp.ticker.FPS;
+    }
 }

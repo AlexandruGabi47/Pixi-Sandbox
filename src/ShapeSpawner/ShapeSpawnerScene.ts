@@ -26,11 +26,13 @@ export class ShapeSpawnerScene extends Scene
 
     private mask: Graphics = new Graphics();
 
-    private readonly shapeCountID: string = "shapeCount";
-    private readonly totalSurfaceAreaID: string = "totalSurfaceArea";
+    private readonly shapeCountElementID: string = "shapeCount";
+    private readonly totalSurfaceAreaElementID: string = "totalSurfaceArea";
+    private readonly fpsElementID: string = "fps";
 
     private shapeCountElement: HTMLElement | null = null;
     private totalSurfaceAreaElement: HTMLElement | null = null;
+    private fpsElement: HTMLElement | null = null;
 
     /**
      * "It's a feature, not a bug." - Every programmer
@@ -45,10 +47,12 @@ export class ShapeSpawnerScene extends Scene
 
     public Init(): void
     {
+        //
         const paramVal = Utils.GetURLParam(this.funnnyFeatureParam);
         if (paramVal !== null)
             this.enableFunnyFeature = paramVal;
 
+        //
         this.shapePool.InitPool(this.individualShapePoolSize)
 
         // Mask
@@ -61,8 +65,9 @@ export class ShapeSpawnerScene extends Scene
         this.CurrentContainer.addChild(this.mask);
 
         //
-        this.shapeCountElement = window.document.getElementById(this.shapeCountID);
-        this.totalSurfaceAreaElement = window.document.getElementById(this.totalSurfaceAreaID);
+        this.shapeCountElement = window.document.getElementById(this.shapeCountElementID);
+        this.totalSurfaceAreaElement = window.document.getElementById(this.totalSurfaceAreaElementID);
+        this.fpsElement = window.document.getElementById(this.fpsElementID);
     }
 
     public Update(deltaTime: number): void
@@ -70,16 +75,27 @@ export class ShapeSpawnerScene extends Scene
         this.TrySpawnShape(deltaTime);
         this.ApplyGravityToShapes(deltaTime);
         this.UpdateMaskSize();
+        if (this.fpsElement !== null)
+            this.fpsElement.textContent = `FPS: ${Math.floor(PixiEngine.GetFPS())}`
     }
 
     private TrySpawnShape(deltaTime: number)
     {
         this.timeSinceLastSpawn += deltaTime;
-        if (this.timeSinceLastSpawn >= 1 / this._shapesPerSecond)
+        if (this.timeSinceLastSpawn >= this.SpawnInterval)
         {
+            const amountToSpawn: number = Math.floor(this.timeSinceLastSpawn / this.SpawnInterval);
+            for (let index = 0; index < amountToSpawn; index++) {
+                this.SpawnRandomShape();
+            }
+
             this.timeSinceLastSpawn = 0;
-            this.SpawnRandomShape();
         }
+    }
+
+    private get SpawnInterval(): number
+    {
+        return 1 / this._shapesPerSecond;
     }
 
     private ApplyGravityToShapes(deltaTime: number)
@@ -102,12 +118,12 @@ export class ShapeSpawnerScene extends Scene
 
     }
 
-    private UpdateTextCounters(): void
+    private UpdateTextCounters(shapeCount: number, totalSurfaceArea: number): void
     {
         if (this.shapeCountElement !== null)
-            this.shapeCountElement.textContent = `Number of current shapes: ${0}`;
+            this.shapeCountElement.textContent = `Number of current shapes: ${shapeCount}`;
         if (this.totalSurfaceAreaElement !== null)
-            this.totalSurfaceAreaElement.textContent = `Surface area occupied by shapes: ${0}`;
+            this.totalSurfaceAreaElement.textContent = `Surface area occupied by shapes: ${totalSurfaceArea}`;
 
     }
 
@@ -128,9 +144,23 @@ export class ShapeSpawnerScene extends Scene
 
         go.graphics.tint = randomColor;
         go.transform.position = randomPos;
-        go.graphics.mask = this.mask;
+        //go.graphics.mask = this.mask;
 
         if (this.enableFunnyFeature)
             this.AddGameObject(go);
+    }
+
+    public AddGameObject(gameObject: GameObject): void
+    {
+        super.AddGameObject(gameObject);
+
+        this.UpdateTextCounters(this.GameObjects.length, 0);
+    }
+
+    public RemoveGameObject(gameObject: GameObject): void
+    {
+        super.RemoveGameObject(gameObject);
+
+        this.UpdateTextCounters(this.GameObjects.length, 0);
     }
 }
