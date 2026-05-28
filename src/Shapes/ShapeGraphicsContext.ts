@@ -32,7 +32,7 @@ export class ShapeGraphicsContext {
             throw new Error(`Shape graphics context for shape ${ShapeType[shape]} not found.`);
         }
 
-        let g: Graphics = new Graphics(this.GraphicsContext.get(shape));
+        const g: Graphics = new Graphics(this.GraphicsContext.get(shape));
         g.eventMode = 'static';
         return g;
     }

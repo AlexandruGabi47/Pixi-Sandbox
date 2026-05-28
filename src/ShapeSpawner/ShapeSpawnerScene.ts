@@ -15,11 +15,11 @@ export enum Colors
 }
 
 export class ShapeSpawnerScene extends Scene {
-    private shapesPerSecond: number = 50;
-    private gravity: number = 200;
+    private _shapesPerSecond: number = 50;
+    private _gravity: number = 200;
 
-    private shapePool: ShapeGameObjectPool = new ShapeGameObjectPool('ShapeGameObjectPool');
-    private individualShapePoolSize: number = 10;
+    private readonly shapePool: ShapeGameObjectPool = new ShapeGameObjectPool('ShapeGameObjectPool');
+    private readonly individualShapePoolSize: number = 10;
 
     private timeSinceLastSpawn: number = 0;
 
@@ -49,14 +49,14 @@ export class ShapeSpawnerScene extends Scene {
 
     private TrySpawnShape(deltaTime: number) {
         this.timeSinceLastSpawn += deltaTime;
-        if (this.timeSinceLastSpawn >= 1 / this.shapesPerSecond) {
+        if (this.timeSinceLastSpawn >= 1 / this._shapesPerSecond) {
             this.timeSinceLastSpawn = 0;
             this.SpawnRandomShape();
         }
     }
 
     private ApplyGravityToShapes(deltaTime: number) {
-        let bounds = PixiEngine.GetCanvasBounds();
+        const bounds = PixiEngine.GetCanvasBounds();
 
         for (const gameObject of this.GameObjects) {
             if (this.IsObjectOutOfBounds(gameObject, bounds))
@@ -64,7 +64,7 @@ export class ShapeSpawnerScene extends Scene {
                 this.shapePool.DespawnShape(gameObject);
                 continue;
             }
-            gameObject.transform.position.y += this.gravity * deltaTime;
+            gameObject.transform.position.y += this._gravity * deltaTime;
         }
     }
 
@@ -73,11 +73,11 @@ export class ShapeSpawnerScene extends Scene {
     }
 
     public SpawnRandomShape(): void {
-        let randomColor: number = Utils.GetRandomEnumElement(Colors);
-        let go: GameObject = this.shapePool.SpawnShape(Utils.GetRandomEnumElement(ShapeType), this);
+        const randomColor: number = Utils.GetRandomEnumElement(Colors);
+        const go: GameObject = this.shapePool.SpawnShape(Utils.GetRandomEnumElement(ShapeType), this);
         
-        let bounds: Rectangle = PixiEngine.GetCanvasBounds();
-        let randomPos: Point = new Point(
+        const bounds: Rectangle = PixiEngine.GetCanvasBounds();
+        const randomPos: Point = new Point(
             Utils.Lerp(bounds.left + bounds.width,bounds.right - bounds.width, Math.random()),
             bounds.top - go.graphics.height);
 

@@ -9,7 +9,7 @@ export class GameObjectFactory {
     }
 
     public static CreateGameObject(name: string, graphics: Graphics): GameObject {
-        let go: GameObject = new GameObject(name, graphics);
+        const go: GameObject = new GameObject(name, graphics);
         this._count++;
         return go;
     }

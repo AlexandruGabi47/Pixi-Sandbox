@@ -21,13 +21,13 @@ export class ShapeGameObjectPool extends Scene {
     }
 
     private CreateRandomShape(): GameObject {
-        let randomShape: number = Utils.GetRandomEnumElement(ShapeType);
+        const randomShape: number = Utils.GetRandomEnumElement(ShapeType);
         return this.CreateShape(randomShape);
     }
 
     private CreateShape(shapeType: ShapeType): GameObject
     {
-        let go: GameObject = GameObjectFactory.CreateGameObject(
+        const go: GameObject = GameObjectFactory.CreateGameObject(
             `${ShapeType[shapeType]}${GameObjectFactory.Count}`,
             ShapeGraphicsContext.GetShapeGraphics(shapeType));
 
@@ -36,11 +36,11 @@ export class ShapeGameObjectPool extends Scene {
 
     private GetShapeGameObject(shapeType: ShapeType): GameObject
     {
-        let go: GameObject | null = this.GameObjects.find(go => go.Name.includes(ShapeType[shapeType])) ?? null
+        const go: GameObject | null = this.GameObjects.find(go => go.Name.includes(ShapeType[shapeType])) ?? null
 
         if (go === null)
         {
-            let newGo: GameObject = this.CreateRandomShape();
+            const newGo: GameObject = this.CreateRandomShape();
             newGo.CurrentScene = this;
 
             return newGo;
@@ -51,7 +51,7 @@ export class ShapeGameObjectPool extends Scene {
 
     public SpawnShape(shapeType: ShapeType, scene: Scene): GameObject
     {
-        let go: GameObject | null = this.GetShapeGameObject(shapeType);
+        const go: GameObject | null = this.GetShapeGameObject(shapeType);
 
         go.CurrentScene = scene;
 
