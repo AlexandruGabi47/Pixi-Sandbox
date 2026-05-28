@@ -2,7 +2,7 @@ import { GameObject } from "../ECS/GameObject";
 import { Scene } from "../Scene/Scene";
 import { Utils } from "../Core/Utils";
 import { PixiEngine } from "../Core/PixiEngine";
-import { Point, Rectangle } from "pixi.js"
+import { Graphics, Point, Rectangle } from "pixi.js"
 import { ShapeGameObjectPool } from "./ShapeGameObjectPool";
 import { ShapeType } from "../Shapes/ShapeGraphicsContext";
 
@@ -14,8 +14,9 @@ export enum Colors
     Yellow = 0xDDDD11
 }
 
-export class ShapeSpawnerScene extends Scene {
-    private _shapesPerSecond: number = 1;
+export class ShapeSpawnerScene extends Scene
+{
+    private _shapesPerSecond: number = 5;
     private _gravity: number = 200;
 
     private readonly shapePool: ShapeGameObjectPool = new ShapeGameObjectPool('ShapeGameObjectPool');
@@ -23,8 +24,17 @@ export class ShapeSpawnerScene extends Scene {
 
     private timeSinceLastSpawn: number = 0;
 
+    private mask: Graphics = new Graphics();
+
+    private readonly shapeCountID: string = "shapeCount";
+    private readonly totalSurfaceAreaID: string = "totalSurfaceArea";
+
+    private shapeCountElement: HTMLElement | null = null;
+    private totalSurfaceAreaElement: HTMLElement | null = null;
+
     /**
-     * Not a bug, a feature
+     * "It's a feature, not a bug." - Every programmer
+     * "It just works" - Todd Howard
      * Basically at some point when I implemented the pool,
      * I would pull an object from the pool array without properly handling in which array they would be
      * Causing a 'funny' bug where eventually new shapes pulled from the pool would be faster than the rest
@@ -40,25 +50,44 @@ export class ShapeSpawnerScene extends Scene {
             this.enableFunnyFeature = paramVal;
 
         this.shapePool.InitPool(this.individualShapePoolSize)
+
+        // Mask
+        this.mask
+            .rect(0, 0, 1000, 1000)
+            .fill({
+                alpha: 0
+            })
+            .label = "Mask";
+        this.CurrentContainer.addChild(this.mask);
+
+        //
+        this.shapeCountElement = window.document.getElementById(this.shapeCountID);
+        this.totalSurfaceAreaElement = window.document.getElementById(this.totalSurfaceAreaID);
     }
 
-    public Update(deltaTime: number): void {
+    public Update(deltaTime: number): void
+    {
         this.TrySpawnShape(deltaTime);
         this.ApplyGravityToShapes(deltaTime);
+        this.UpdateMaskSize();
     }
 
-    private TrySpawnShape(deltaTime: number) {
+    private TrySpawnShape(deltaTime: number)
+    {
         this.timeSinceLastSpawn += deltaTime;
-        if (this.timeSinceLastSpawn >= 1 / this._shapesPerSecond) {
+        if (this.timeSinceLastSpawn >= 1 / this._shapesPerSecond)
+        {
             this.timeSinceLastSpawn = 0;
             this.SpawnRandomShape();
         }
     }
 
-    private ApplyGravityToShapes(deltaTime: number) {
+    private ApplyGravityToShapes(deltaTime: number)
+    {
         const bounds = PixiEngine.GetCanvasBounds();
 
-        for (const gameObject of this.GameObjects) {
+        for (const gameObject of this.GameObjects)
+        {
             if (this.IsObjectOutOfBounds(gameObject, bounds))
             {
                 this.shapePool.DespawnShape(gameObject);
@@ -68,14 +97,30 @@ export class ShapeSpawnerScene extends Scene {
         }
     }
 
-    private IsObjectOutOfBounds(gameObject: GameObject, bounds: Rectangle) {
+    private UpdateMaskSize(): void
+    {
+
+    }
+
+    private UpdateTextCounters(): void
+    {
+        if (this.shapeCountElement !== null)
+            this.shapeCountElement.textContent = `Number of current shapes: ${0}`;
+        if (this.totalSurfaceAreaElement !== null)
+            this.totalSurfaceAreaElement.textContent = `Surface area occupied by shapes: ${0}`;
+
+    }
+
+    private IsObjectOutOfBounds(gameObject: GameObject, bounds: Rectangle)
+    {
         return gameObject.transform.position.y > bounds.bottom + gameObject.graphics.height;
     }
 
-    public SpawnRandomShape(): void {
+    public SpawnRandomShape(): void
+    {
         const randomColor: number = Utils.GetRandomEnumElement(Colors);
         const go: GameObject = this.shapePool.SpawnShape(Utils.GetRandomEnumElement(ShapeType), this);
-        
+
         const bounds: Rectangle = PixiEngine.GetCanvasBounds();
         const randomPos: Point = new Point(
             Utils.Lerp(bounds.left + go.graphics.width, bounds.right - go.graphics.width, Math.random()),
@@ -83,6 +128,7 @@ export class ShapeSpawnerScene extends Scene {
 
         go.graphics.tint = randomColor;
         go.transform.position = randomPos;
+        go.graphics.mask = this.mask;
 
         if (this.enableFunnyFeature)
             this.AddGameObject(go);

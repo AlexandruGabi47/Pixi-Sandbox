@@ -5,14 +5,17 @@ import { GameObjectFactory } from "../ECS/GameObjectFactory";
 import { GameObject } from "../ECS/GameObject";
 import { PixiEngine } from "../Core/PixiEngine";
 
-export class ShapeGameObjectPool extends Scene {
+export class ShapeGameObjectPool extends Scene
+{
     /**
      * @param initialPoolCount the initial count for each shape type
      */
     public InitPool(initialPoolCount: number): void
     {
-        Utils.GetAllEnumElements(ShapeType).forEach(shape => {
-            for (let index = 0; index < initialPoolCount; index++) {
+        Utils.GetAllEnumElements(ShapeType).forEach(shape =>
+        {
+            for (let index = 0; index < initialPoolCount; index++)
+            {
                 this.CreateShape(shape);
             }
         });
@@ -20,7 +23,8 @@ export class ShapeGameObjectPool extends Scene {
         PixiEngine.AddContainer(this.CurrentContainer)
     }
 
-    private CreateRandomShape(): GameObject {
+    private CreateRandomShape(): GameObject
+    {
         const randomShape: number = Utils.GetRandomEnumElement(ShapeType);
         return this.CreateShape(randomShape);
     }
@@ -60,7 +64,7 @@ export class ShapeGameObjectPool extends Scene {
         go.graphics.on("pointerdown", (event: Event): void => this.onMouseDown(event, go));
 
         go.Enabled = true;
-        
+
         return go;
     }
 
@@ -70,7 +74,7 @@ export class ShapeGameObjectPool extends Scene {
 
         go.SwitchParentTo(this.CurrentContainer);
 
-        go.graphics.off("pointerdown", (event: Event): void  => this.onMouseDown(event, go));
+        go.graphics.off("pointerdown", (event: Event): void => this.onMouseDown(event, go));
 
         go.Enabled = false;
     }

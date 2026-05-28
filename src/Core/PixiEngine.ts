@@ -11,7 +11,7 @@ export class PixiEngine
         PixiEngine._currentScene = scene;
         PixiEngine.AddContainer(scene.CurrentContainer);
     }
-    
+
     public static get CurrentScene(): Scene
     {
         return PixiEngine._currentScene;
@@ -42,8 +42,8 @@ export class PixiEngine
 
         PixiEngine.PixiApp.ticker.start();
     }
-    
-    public static UpdateLoop(ticker: Ticker): void
+
+    private static UpdateLoop(ticker: Ticker): void
     {
         PixiEngine.CurrentScene?.Update(ticker.deltaMS / 1000);
         PixiEngine.CurrentScene?.Render();
