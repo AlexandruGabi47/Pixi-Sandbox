@@ -149,7 +149,7 @@ canvas {
   display: flex;
   flex-direction: row;
   align-self: center;
-  gap: 10vw;
+  gap: 1vw;
 }
 
 button {

@@ -34,7 +34,7 @@ export class ShapeSpawnerScene extends Scene
 
     private spawnArea: Graphics;
     private mask: Graphics;
-    private readonly maskHeightReduction: number = 100;
+    private readonly maskHeightReduction: number = 10;
 
     private shapeCountElement: HTMLElement | null = null;
     private totalSurfaceAreaElement: HTMLElement | null = null;
@@ -72,7 +72,7 @@ export class ShapeSpawnerScene extends Scene
         // Mask
         const maskContext: GraphicsContext = new GraphicsContext();
         maskContext
-            .rect(0, 0, PixiEngine.CanvasResolution.x, PixiEngine.CanvasResolution.y - 50)
+            .rect(0, 0, PixiEngine.CanvasResolution.x, PixiEngine.CanvasResolution.y - this.maskHeightReduction)
             .fill({ alpha: 0 });
 
         this.mask = new Graphics(maskContext);
@@ -170,14 +170,6 @@ export class ShapeSpawnerScene extends Scene
         this.spawnArea.height = PixiEngine.CanvasResolution.y - this.maskHeightReduction;
     }
 
-    private UpdateTextCounters(shapeCount: number, totalSurfaceArea: number): void
-    {
-        if (this.shapeCountElement !== null)
-            this.shapeCountElement.textContent = `Number of current shapes: ${shapeCount}`;
-        if (this.totalSurfaceAreaElement !== null)
-            this.totalSurfaceAreaElement.textContent = `Surface area occupied by shapes: ${totalSurfaceArea}`;
-    }
-
     private IsObjectOutOfBounds(gameObject: GameObject, bounds: Rectangle)
     {
         return gameObject.transform.position.y > bounds.bottom + gameObject.graphics.height;
@@ -199,7 +191,7 @@ export class ShapeSpawnerScene extends Scene
 
         go.graphics.tint = randomColor;
         go.transform.position = pos;
-        go.transform.scale.set(1.5);
+        go.transform.scale.set(1.1);
         go.graphics.mask = this.mask;
 
         if (this.enableFunnyFeature)
@@ -220,10 +212,18 @@ export class ShapeSpawnerScene extends Scene
         this.UpdateTextCounters(this.GameObjects.length, this.TotalSurfaceArea);
     }
 
+    private UpdateTextCounters(shapeCount: number, totalSurfaceArea: number): void
+    {
+        if (this.shapeCountElement !== null)
+            this.shapeCountElement.textContent = `Number of current shapes: ${shapeCount}`;
+        if (this.totalSurfaceAreaElement !== null)
+            this.totalSurfaceAreaElement.textContent = `Surface area occupied by shapes: ${totalSurfaceArea}`;
+    }
+
     private UpdateSPSText(): void
     {
         if (this.spsTextElement !== null)
-            this.spsTextElement.textContent = `Number of shapes/s: ${this.shapesPerSecond}`;
+            this.spsTextElement.textContent = `Shapes/s: ${this.shapesPerSecond}`;
     }
 
     private UpdateGravityText(): void
