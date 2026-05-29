@@ -101,7 +101,7 @@ p {
 #center {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 5px;
   place-content: center;
   place-items: center;
   flex-grow: 1;
@@ -114,11 +114,29 @@ p {
 
 /**/
 
-#canvas {
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.left-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  padding-left: 5%
+}
+
+span {
   background: var(--code-bg);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
+  padding: 10px;
+}
 
+canvas {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   width: 90vw;
-  height: 90vh;
+  height: 80vh;
 }

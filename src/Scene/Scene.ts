@@ -11,8 +11,6 @@ export abstract class Scene
         this._currentContainer = new Container({ label: label });
     }
 
-    public Init(): void { }
-
     public set CurrentContainer(container: Container)
     {
         this._currentContainer = container;
@@ -56,5 +54,13 @@ export abstract class Scene
     public get GameObjects(): GameObject[]
     {
         return this._gameObjects;
+    }
+
+    public get TotalSurfaceArea(): number
+    {
+        let totalSurfaceArea: number = 0;
+        this.GameObjects.forEach((go: GameObject) => totalSurfaceArea += go.SurfaceArea)
+
+        return Math.floor(totalSurfaceArea);
     }
 }

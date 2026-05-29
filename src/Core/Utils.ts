@@ -23,6 +23,4 @@ export class Utils
 
         return params.get(param);
     }
-
-    public static Set
 }

@@ -10,8 +10,12 @@ export class ShapeGameObjectPool extends Scene
     /**
      * @param initialPoolCount the initial count for each shape type
      */
-    public InitPool(initialPoolCount: number): void
+    constructor(initialPoolCount: number)
     {
+        super("ShapeGameObjectPool");
+        
+        PixiEngine.AddContainer(this.CurrentContainer)
+
         Utils.GetAllEnumElements(ShapeType).forEach(shape =>
         {
             for (let index = 0; index < initialPoolCount; index++)
@@ -19,8 +23,6 @@ export class ShapeGameObjectPool extends Scene
                 this.CreateShape(shape);
             }
         });
-
-        PixiEngine.AddContainer(this.CurrentContainer)
     }
 
     private CreateRandomShape(): GameObject
@@ -34,6 +36,8 @@ export class ShapeGameObjectPool extends Scene
         const go: GameObject = GameObjectFactory.CreateGameObject(
             `${ShapeType[shapeType]}${GameObjectFactory.Count}`,
             ShapeGraphicsContext.GetShapeGraphics(shapeType));
+        
+        this.AddToPool(go);
 
         return go;
     }
@@ -43,12 +47,7 @@ export class ShapeGameObjectPool extends Scene
         const go: GameObject | null = this.GameObjects.find(go => go.Name.includes(ShapeType[shapeType])) ?? null
 
         if (go === null)
-        {
-            const newGo: GameObject = this.CreateRandomShape();
-            newGo.CurrentScene = this;
-
-            return newGo;
-        }
+            return this.CreateRandomShape();
 
         return go;
     }
@@ -57,26 +56,32 @@ export class ShapeGameObjectPool extends Scene
     {
         const go: GameObject | null = this.GetShapeGameObject(shapeType);
 
-        go.CurrentScene = scene;
-
-        go.SwitchParentTo(scene.CurrentContainer);
+        this.RemoveFromPool(go, scene);
 
         go.graphics.on("pointerdown", (event: Event): void => this.onMouseDown(event, go));
-
-        go.Enabled = true;
 
         return go;
     }
 
     public DespawnShape(go: GameObject): void
     {
-        go.CurrentScene = this;
-
-        go.SwitchParentTo(this.CurrentContainer);
+        this.AddToPool(go);
 
         go.graphics.off("pointerdown", (event: Event): void => this.onMouseDown(event, go));
+    }
 
+    private AddToPool(go: GameObject)
+    {
+        go.CurrentScene = this;
+        go.SwitchParentTo(this.CurrentContainer);
         go.Enabled = false;
+    }
+
+    private RemoveFromPool(go: GameObject, scene: Scene)
+    {
+        go.CurrentScene = scene;
+        go.SwitchParentTo(scene.CurrentContainer);
+        go.Enabled = true;
     }
 
     private onMouseDown(event: Event, go: GameObject): void

@@ -82,7 +82,7 @@ export class GameObject
      * Needs update, not sure how to get the surface area right now
      * Or the pixels or something from the graphic to help with calculating it
      */
-    public GetSurfaceArea(): number
+    public get SurfaceArea(): number
     {
         return this.graphics.width * this.graphics.height;
     }

@@ -1,4 +1,4 @@
-import { Application, Container, Rectangle, Ticker } from 'pixi.js'
+import { Application, Container, Point, Rectangle, Ticker } from 'pixi.js'
 import { Scene } from '../Scene/Scene'
 
 export class PixiEngine
@@ -22,23 +22,21 @@ export class PixiEngine
         PixiEngine.PixiApp.stage.addChild(container);
     }
 
-    public static async Startup(scene: Scene): Promise<void>
+    public static async Startup(): Promise<void>
     {
         PixiEngine.PixiApp = new Application();
         // @ts-ignore - For PixiJS debugging
         globalThis.__PIXI_APP__ = PixiEngine.PixiApp;
 
+        const mainCanvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement
         await PixiEngine.PixiApp.init({
-            canvas: document.getElementById('canvas') as HTMLCanvasElement,
-            resizeTo: window,
+            canvas: mainCanvas,
+            resizeTo: mainCanvas,
             backgroundAlpha: 0
         })
 
         PixiEngine.PixiApp.ticker = new Ticker();
         PixiEngine.PixiApp.ticker.add(PixiEngine.UpdateLoop);
-
-        PixiEngine.CurrentScene = scene;
-        PixiEngine.CurrentScene.Init();
 
         PixiEngine.PixiApp.ticker.start();
     }
@@ -49,17 +47,17 @@ export class PixiEngine
         PixiEngine.CurrentScene?.Render();
     }
 
-    public static GetCurrentScene(): Scene | null
-    {
-        return PixiEngine.CurrentScene;
-    }
-
-    public static GetCanvasBounds(): Rectangle
+    public static get CanvasBounds(): Rectangle
     {
         return PixiEngine.PixiApp.screen.getBounds();
     }
 
-    public static GetFPS(): number
+    public static get CanvasResolution(): Point
+    {
+        return new Point(PixiEngine.PixiApp.screen.width, PixiEngine.PixiApp.screen.height);
+    }
+
+    public static get CurrentFPS(): number
     {
         return PixiEngine.PixiApp.ticker.FPS;
     }

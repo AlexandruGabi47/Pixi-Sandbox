@@ -14,8 +14,7 @@ export enum ShapeType
 
 export class ShapeGraphicsContext
 {
-
-    private static TrianglePD: PointData[] = [{ x: -35, y: 35 }, { x: 0, y: -35 }, { x: 35, y: 35 }];
+    private static TrianglePD: PointData[] = [{ x: 0, y: -35 }, { x: 35, y: 35 }, { x: -35, y: 35 }];
     private static PentagonPD: PointData[] = [{ x: -30, y: -5 }, { x: 0, y: -25 }, { x: 30, y: -5 }, { x: 23, y: 35 }, { x: -23, y: 35 }];
     private static HexagonPD: PointData[] = [{ x: -30, y: 0 }, { x: -15, y: -25 }, { x: 15, y: -25 }, { x: 30, y: 0 }, { x: 15, y: 25 }, { x: -15, y: 25 }];
 
