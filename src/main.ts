@@ -12,6 +12,18 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <canvas id="canvas"></canvas>
   </div>
+  <div class="control-buttons">
+    <div>
+      <button id="decreaseSPS">-</button>
+      <span id="spsText">Number of shapes/s: 0</span>
+      <button id="increaseSPS">+</button>
+    </div>
+    <div>
+      <button id="decreaseGravity">-</button>
+      <span id="gravityText">Gravity: 0</span>
+      <button id="increaseGravity">+</button>
+    </div>
+  </div>
 </div>
 `
 

@@ -37,6 +37,9 @@
     --bg: #16171d;
     --border: #2e303a;
     --code-bg: #1f2028;
+    --button: #252630;
+    --button-hover: #1e1f25;
+    --button-active: #15151b;
     --accent: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
@@ -105,11 +108,6 @@ p {
   place-content: center;
   place-items: center;
   flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
 }
 
 /**/
@@ -121,16 +119,22 @@ p {
 
 .left-group {
   display: flex;
-  gap: 10px;
+  gap: 2px;
   justify-content: flex-start;
-  padding-left: 5%
+  padding-top: 1%;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 span {
   background: var(--code-bg);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
-  padding: 10px;
+  padding: 5px;
+
+  @media (max-width: 1024px) {
+    font-size: smaller;
+  }
 }
 
 canvas {
@@ -138,5 +142,27 @@ canvas {
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   width: 90vw;
-  height: 80vh;
+  height: 70vh;
+}
+
+.control-buttons {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  gap: 10vw;
+}
+
+button {
+  background: var(--button);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  width: 50px;
+  height: 50px;
+}
+
+button:hover {
+  background: var(--button-hover);
+}
+button:active {
+  background: var(--button-active);
 }

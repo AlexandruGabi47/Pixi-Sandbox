@@ -5,6 +5,7 @@ import { PixiEngine } from "../Core/PixiEngine";
 import { Graphics, GraphicsContext, Point, Rectangle } from "pixi.js"
 import { ShapeGameObjectPool } from "./ShapeGameObjectPool";
 import { ShapeType } from "../Shapes/ShapeGraphicsContext";
+import { HTMLNumberStepper } from "../Elements/HTMLNumberStepper";
 
 export enum Colors
 {
@@ -20,25 +21,30 @@ export enum Colors
 
 export class ShapeSpawnerScene extends Scene
 {
-    private _shapesPerSecond: number = 1;
-    private _gravity: number = 200;
+    private shapesPerSecond: number = 1;
+    private gravity: number = 200;
+
+    private readonly minSPS: number = 1;
+    private readonly minGravity: number = 100;
 
     private readonly shapePool: ShapeGameObjectPool;
     private readonly individualShapePoolSize: number = 10;
 
     private timeSinceLastSpawn: number = 0;
 
-    private maskArea: Graphics;
+    private spawnArea: Graphics;
     private mask: Graphics;
     private readonly maskHeightReduction: number = 100;
-
-    private readonly shapeCountElementID: string = "shapeCount";
-    private readonly totalSurfaceAreaElementID: string = "totalSurfaceArea";
-    private readonly fpsElementID: string = "fps";
 
     private shapeCountElement: HTMLElement | null = null;
     private totalSurfaceAreaElement: HTMLElement | null = null;
     private fpsElement: HTMLElement | null = null;
+
+    private shapesPerSecondNumberStepper: HTMLNumberStepper;
+    private gravityNumberStepper: HTMLNumberStepper;
+
+    private spsTextElement: HTMLElement | null;
+    private gravityTextElement: HTMLElement | null;
 
     /**
      * "It's a feature, not a bug." - Every programmer
@@ -72,26 +78,48 @@ export class ShapeSpawnerScene extends Scene
         this.mask = new Graphics(maskContext);
         this.mask.label = "Mask";
 
-        this.maskArea = new Graphics(maskContext);
-        this.maskArea.label = "MaskArea";
+        this.spawnArea = new Graphics(maskContext);
+        this.spawnArea.label = "SpawnArea";
 
-        this.maskArea.eventMode = 'static';
-        this.maskArea.on("pointerdown", (event): void => { console.log(event.client); this.SpawnRandomShape(new Point(event.client.x, event.client.y)); });
+        this.spawnArea.eventMode = 'static';
+        this.spawnArea.on("pointerdown", (event): void => { console.log(event.client); this.SpawnRandomShape(new Point(event.client.x, event.client.y)); });
 
         this.CurrentContainer.addChild(this.mask);
-        this.CurrentContainer.addChild(this.maskArea);
+        this.CurrentContainer.addChild(this.spawnArea);
 
         //
-        this.shapeCountElement = window.document.getElementById(this.shapeCountElementID);
-        this.totalSurfaceAreaElement = window.document.getElementById(this.totalSurfaceAreaElementID);
-        this.fpsElement = window.document.getElementById(this.fpsElementID);
+        this.shapeCountElement = window.document.getElementById("shapeCount");
+        this.totalSurfaceAreaElement = window.document.getElementById("totalSurfaceArea");
+        this.fpsElement = window.document.getElementById("fps");
+
+        this.spsTextElement = window.document.getElementById("spsText");
+        this.gravityTextElement = window.document.getElementById("gravityText");
+
+        this.shapesPerSecondNumberStepper = new HTMLNumberStepper("decreaseSPS", "increaseSPS", 1, (amount) =>
+        {
+            this.shapesPerSecond += amount;
+            if (this.shapesPerSecond < this.minSPS)
+                this.shapesPerSecond = this.minSPS;
+            this.UpdateSPSText();
+        });
+        this.gravityNumberStepper = new HTMLNumberStepper("decreaseGravity", "increaseGravity", 10, (amount) =>
+        {
+            this.gravity += amount;
+            if (this.gravity < this.minGravity)
+                this.gravity = this.minGravity;
+            this.UpdateGravityText();
+        });
+        
+        this.UpdateSPSText();
+        this.UpdateGravityText();
     }
 
     public Update(deltaTime: number): void
     {
         this.TrySpawnShape(deltaTime);
         this.ApplyGravityToShapes(deltaTime);
-        this.UpdateMaskSize();
+        this.UpdateMaskAndSpawn();
+
         if (this.fpsElement !== null)
             this.fpsElement.textContent = `FPS: ${Math.floor(PixiEngine.CurrentFPS)}`
     }
@@ -113,7 +141,7 @@ export class ShapeSpawnerScene extends Scene
 
     private get SpawnInterval(): number
     {
-        return 1 / this._shapesPerSecond;
+        return 1 / this.shapesPerSecond;
     }
 
     private ApplyGravityToShapes(deltaTime: number)
@@ -127,15 +155,19 @@ export class ShapeSpawnerScene extends Scene
                 this.shapePool.DespawnShape(gameObject);
                 continue;
             }
-            gameObject.transform.position.y += this._gravity * deltaTime;
+            gameObject.transform.position.y += this.gravity * deltaTime;
         }
     }
 
-    private UpdateMaskSize(): void
+    private UpdateMaskAndSpawn(): void
     {
         this.mask.scale.set(1);
         this.mask.width = PixiEngine.CanvasResolution.x;
         this.mask.height = PixiEngine.CanvasResolution.y - this.maskHeightReduction;
+
+        this.spawnArea.scale.set(1);
+        this.spawnArea.width = PixiEngine.CanvasResolution.x;
+        this.spawnArea.height = PixiEngine.CanvasResolution.y - this.maskHeightReduction;
     }
 
     private UpdateTextCounters(shapeCount: number, totalSurfaceArea: number): void
@@ -186,5 +218,17 @@ export class ShapeSpawnerScene extends Scene
         super.RemoveGameObject(gameObject);
 
         this.UpdateTextCounters(this.GameObjects.length, this.TotalSurfaceArea);
+    }
+
+    private UpdateSPSText(): void
+    {
+        if (this.spsTextElement !== null)
+            this.spsTextElement.textContent = `Number of shapes/s: ${this.shapesPerSecond}`;
+    }
+
+    private UpdateGravityText(): void
+    {
+        if (this.gravityTextElement !== null)
+            this.gravityTextElement.textContent = `Gravity: ${this.gravity}`;
     }
 }
